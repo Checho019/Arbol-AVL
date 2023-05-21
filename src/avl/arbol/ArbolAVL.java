@@ -1,14 +1,15 @@
-package arbolBB;
+package avl.arbol;
 
+import avl.ArbolGrafico;
 import java.util.LinkedList;
 import javax.swing.JPanel;
 
-public class ArbolBB {
+public class ArbolAVL {
 
-    private Nodo raiz;
-    int alt, tam;
+    private NodoAVL raiz;
+    public int alt, tam;
 
-    public ArbolBB() {
+    public ArbolAVL() {
         raiz = null;
         alt = 0;
         tam = 0;
@@ -17,7 +18,7 @@ public class ArbolBB {
     // Agregar nodo por valor
     public void agregar(int dato) {
         this.tam++;
-        Nodo nuevo = new Nodo(dato);
+        NodoAVL nuevo = new NodoAVL(dato);
         if (this.raiz == null) {
             this.raiz = nuevo;
         } else {
@@ -26,7 +27,7 @@ public class ArbolBB {
     }
 
     // Agregar nodo en nodo especifico
-    public void agregar(Nodo nuevo, Nodo pivote) {
+    public void agregar(NodoAVL nuevo, NodoAVL pivote) {
         if (nuevo.getDato() <= pivote.getDato()) {
             if (!pivote.tieneHijoIzq()) {
                 pivote.setIzq(nuevo);
@@ -48,7 +49,7 @@ public class ArbolBB {
     }
 
     // Buscar nodo
-    public Nodo buscarNodo(int dato) throws Exception{
+    public NodoAVL buscarNodo(int dato) throws Exception{
         if (raiz != null){
             return buscarNodo(raiz,dato);
         }
@@ -56,7 +57,7 @@ public class ArbolBB {
     }
     
     // Buscar nodo a partir de una raiz
-    public Nodo buscarNodo(Nodo n, int dato) throws Exception{
+    public NodoAVL buscarNodo(NodoAVL n, int dato) throws Exception{
         if (n.getDato() > dato){
             if (n.tieneHijoIzq()){
                 return buscarNodo(n.getIzq(), dato);
@@ -74,8 +75,65 @@ public class ArbolBB {
         }
     }
     
+    // Eliminadción de nodo
+    public void eliminar(int dato) throws Exception{
+        NodoAVL x = buscarNodo(dato);
+        // Caso en que la raiz es el dato a eliminar
+        if (raiz == x){
+            if (raiz.esHoja()){
+                tam--;
+                raiz = null;
+            } else if (raiz.tieneAmbosHijos()){
+                NodoAVL tmp = raiz.getDer().encontrarMinimo();
+                eliminar(tmp.getDato());
+                x.setDato(tmp.getDato());
+            } else {
+                tam--;
+                raiz = raiz.tieneHijoIzq() ? raiz.getIzq() : raiz.getDer();
+                raiz.setPadre(null);
+            }
+            
+        // El nodo a eliminar es un nodo comun de nuestro arbol    
+        } else {
+            NodoAVL padrex = x.getPadre();
+            if (x.esHoja()){
+                tam--;
+                if (x.esHijoIzq()){
+                    x.getPadre().setIzq(null);
+                } else {
+                    x.getPadre().setDer(null);
+                }
+                actualizarFB(padrex);
+            } else if (x.tieneAmbosHijos()){
+                NodoAVL tmp = x.getDer().encontrarMinimo();
+                eliminar(tmp.getDato());
+                x.setDato(tmp.getDato());
+            } else {
+                tam--;
+                if (x.tieneHijoIzq()){
+                    if (x.esHijoIzq()){
+                        x.getPadre().setIzq(x.getIzq());
+                        x.getIzq().setPadre(x.getPadre());
+                    } else {
+                        x.getPadre().setDer(x.getIzq());
+                        x.getIzq().setPadre(x.getPadre());
+                    } 
+                } else {
+                    if (x.esHijoIzq()){
+                        x.getPadre().setIzq(x.getDer());
+                        x.getDer().setPadre(x.getPadre());
+                    } else {
+                        x.getPadre().setDer(x.getDer());
+                        x.getDer().setPadre(x.getPadre());
+                    } 
+                }
+                actualizarFB(padrex);
+            }
+        }
+    }
+    
     // Actualizar factores de balance
-    public void actualizarFB(Nodo n) {
+    public void actualizarFB(NodoAVL n) {
         System.out.println("Actualizando nodo: " + n.getDato());
         int viejoBalance = n.getFb();
 
@@ -111,7 +169,7 @@ public class ArbolBB {
     }
 
     // Balancear arbol en caso de no estarlo
-    public void balancear(Nodo n) {
+    public void balancear(NodoAVL n) {
         if (n.getFb() < 0){
             if (n.getDer().getFb() > 0){
                 rotarDerecha(n.getDer());
@@ -128,9 +186,9 @@ public class ArbolBB {
     }
     
     // Rotaciones
-    private void rotarIzquierda(Nodo n){
-        Nodo raizVieja = n;
-        Nodo raizNueva = n.getDer();
+    private void rotarIzquierda(NodoAVL n){
+        NodoAVL raizVieja = n;
+        NodoAVL raizNueva = n.getDer();
         raizVieja.setDer(raizNueva.getIzq());
         if (raizNueva.tieneHijoIzq()){
             raizNueva.getIzq().setPadre(raizVieja);
@@ -150,9 +208,9 @@ public class ArbolBB {
         actualizarFB(raizVieja);
     }
     
-    private void rotarDerecha(Nodo n){
-        Nodo raizVieja = n;
-        Nodo raizNueva = n.getIzq();
+    private void rotarDerecha(NodoAVL n){
+        NodoAVL raizVieja = n;
+        NodoAVL raizNueva = n.getIzq();
         raizVieja.setIzq(raizNueva.getDer());
         if (raizNueva.tieneHijoDer()){
             raizNueva.getDer().setPadre(raizVieja);
@@ -179,7 +237,7 @@ public class ArbolBB {
         return rec;
     }
 
-    public void inorden(Nodo aux, LinkedList recorrido) {
+    public void inorden(NodoAVL aux, LinkedList recorrido) {
         if (aux != null) {
             inorden(aux.getIzq(), recorrido);
             recorrido.add(aux.getDato());
@@ -194,7 +252,7 @@ public class ArbolBB {
         return rec;
     }
 
-    public void postorden(Nodo aux, LinkedList recorrido) {
+    public void postorden(NodoAVL aux, LinkedList recorrido) {
         if (aux != null) {
             postorden(aux.getIzq(), recorrido);
             postorden(aux.getDer(), recorrido);
@@ -209,7 +267,7 @@ public class ArbolBB {
         return rec;
     }
 
-    public void preorden(Nodo aux, LinkedList recorrido) {
+    public void preorden(NodoAVL aux, LinkedList recorrido) {
         if (aux != null) {
             recorrido.add(aux.getDato());
             preorden(aux.getIzq(), recorrido);
@@ -217,44 +275,15 @@ public class ArbolBB {
         }
     }
 
-    //Metodo para verificar si hay un nodo en el arbol
-    public boolean existe(int dato) {
-        Nodo aux = raiz;
-        while (aux != null) {
-            if (dato == aux.getDato()) {
-                return true;
-            } else if (dato > aux.getDato()) {
-                aux = aux.getDer();
-            } else {
-                aux = aux.getIzq();
-            }
-        }
-        return false;
-    }
-
-    private void altura(Nodo aux, int nivel) {
-        if (aux != null) {
-            altura(aux.getIzq(), nivel + 1);
-            alt = nivel;
-            altura(aux.getDer(), nivel + 1);
-        }
-    }
-
-    //Devuleve la altura del arbol
-    public int getAltura() {
-        altura(raiz, 1);
-        return alt;
-    }
-
     public JPanel getdibujo() {
-        return new ArbolExpresionGrafico(this);
+        return new ArbolGrafico(this);
     }
     
-    public Nodo getRaiz() {
+    public NodoAVL getRaiz() {
         return raiz;
     }
 
-    public void setRaiz(Nodo raiz) {
+    public void setRaiz(NodoAVL raiz) {
         this.raiz = raiz;
     }
 }

@@ -1,21 +1,21 @@
 
-package arbolBB;
+package avl.arbol;
 
-public class Nodo {
-    private int dato, altIzq, altDer, fb;
-    private Nodo padre,izq,der;
+public class NodoAVL {
+    private int dato, altIzq, altDer, fb, altura = 0;
+    private NodoAVL padre,izq,der;
 
     // Constructores
-    public Nodo(int dato){
+    public NodoAVL(int dato){
         this.dato = dato;
     }
     
-    public Nodo(int dato, Nodo padre){
+    public NodoAVL(int dato, NodoAVL padre){
         this.dato = dato;
         this.padre = padre;
     }
     
-    public Nodo(int dato, Nodo izq, Nodo der) {
+    public NodoAVL(int dato, NodoAVL izq, NodoAVL der) {
         this.dato = dato;
         this.izq = izq;
         this.der = der;
@@ -52,7 +52,7 @@ public class Nodo {
     }
     
     // -- Operaciones utiles para la eliminacion de nodos
-    public Nodo encontrarMinimo(){
+    public NodoAVL encontrarMinimo(){
         if(this.tieneHijoIzq()){
             return this.izq.encontrarMinimo();
         } else {
@@ -60,7 +60,7 @@ public class Nodo {
         }
     }
     
-    public Nodo encontrarMaximo(){
+    public NodoAVL encontrarMaximo(){
         if(this.tieneHijoDer()){
             return this.der.encontrarMaximo();
         } else {
@@ -68,12 +68,62 @@ public class Nodo {
         }
     }
     
+    public int encontrarAltura(){
+        if (this.esHoja()){
+            return 1;
+        } else {
+            if (this.tieneAmbosHijos()){
+                return Math.max(izq.encontrarAltura(), der.encontrarAltura()) + 1;
+            } else {
+                return this.tieneHijoIzq() ? this.getIzq().encontrarAltura() + 1 : this.getDer().encontrarAltura();
+            }
+        }
+    }
+    
+    public String recorridoPre(){
+        String cadena = "";
+        cadena += " " + this.dato + " ";
+        if (this.tieneHijoIzq()){
+            cadena += " " + izq.recorridoPre() + " ";
+        }
+        if (this.tieneHijoDer()){
+            cadena += " " + der.recorridoPre() + " ";
+        }
+        return cadena;
+    }
+    
+    public String recorridoIn(){
+        String cadena = "";
+        if (this.tieneHijoIzq()){
+            cadena += " " + izq.recorridoIn() + " ";
+        }
+        cadena += " " + this.dato + " ";
+        if (this.tieneHijoDer()){
+            cadena += " " + der.recorridoIn() + " ";
+        }
+        return cadena;
+    }
+    
+    public String recorridoPos(){
+        String cadena = "";
+        if (this.tieneHijoIzq()){
+            cadena += " " + izq.recorridoPos() + " ";
+        }
+        if (this.tieneHijoDer()){
+            cadena += " " + der.recorridoPos() + " ";
+        }
+        cadena += " " + this.dato + " ";
+        return cadena;
+    }
+    
+    
+    
     // -- Setters y getters
-    public Nodo getPadre() {
+    public NodoAVL getPadre() {
         return padre;
     }
 
-    public void setPadre(Nodo padre) {
+    public void setPadre(NodoAVL padre) {
         this.padre = padre;
     }
     
@@ -85,19 +135,19 @@ public class Nodo {
         this.dato = dato;
     }
 
-    public Nodo getIzq() {
+    public NodoAVL getIzq() {
         return izq;
     }
 
-    public void setIzq(Nodo izq) {
+    public void setIzq(NodoAVL izq) {
         this.izq = izq;
     }
 
-    public Nodo getDer() {
+    public NodoAVL getDer() {
         return der;
     }
 
-    public void setDer(Nodo der) {
+    public void setDer(NodoAVL der) {
         this.der = der;
     }
 

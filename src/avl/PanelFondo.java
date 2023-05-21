@@ -1,4 +1,4 @@
-package arbolBB;
+package avl;
 /**
  *
  * @author ploks
