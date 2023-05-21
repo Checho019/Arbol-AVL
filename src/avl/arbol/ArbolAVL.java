@@ -1,7 +1,6 @@
 package avl.arbol;
 
 import avl.ArbolGrafico;
-import java.util.LinkedList;
 import javax.swing.JPanel;
 
 public class ArbolAVL {
@@ -17,18 +16,24 @@ public class ArbolAVL {
 
     // Agregar nodo por valor
     public void agregar(int dato) {
-        this.tam++;
+        try {
+            if (buscarNodo(dato) != null){
+                return;
+            }
+        } catch (Exception e){}
+        tam++;
         NodoAVL nuevo = new NodoAVL(dato);
-        if (this.raiz == null) {
-            this.raiz = nuevo;
+        if (raiz == null) {
+            raiz = nuevo;
         } else {
-            agregar(nuevo, this.raiz);
+            agregar(nuevo, raiz);
         }
     }
 
     // Agregar nodo en nodo especifico
     public void agregar(NodoAVL nuevo, NodoAVL pivote) {
-        if (nuevo.getDato() <= pivote.getDato()) {
+        // Agregar <= para admitir repetidos
+        if (nuevo.getDato() < pivote.getDato()) {
             if (!pivote.tieneHijoIzq()) {
                 pivote.setIzq(nuevo);
                 nuevo.setPadre(pivote);
@@ -36,7 +41,7 @@ public class ArbolAVL {
             } else {
                 agregar(nuevo, pivote.getIzq());
             }
-        } else {
+        } else if (nuevo.getDato() > pivote.getDato()){
             if (!pivote.tieneHijoDer()) {
                 pivote.setDer(nuevo);
                 nuevo.setPadre(pivote);
@@ -45,7 +50,6 @@ public class ArbolAVL {
                 agregar(nuevo, pivote.getDer());
             }
         }
-        actualizarFB(raiz);
     }
 
     // Buscar nodo
@@ -134,7 +138,6 @@ public class ArbolAVL {
     
     // Actualizar factores de balance
     public void actualizarFB(NodoAVL n) {
-        System.out.println("Actualizando nodo: " + n.getDato());
         int viejoBalance = n.getFb();
 
         // altura sub-arbol izquierdo
@@ -153,12 +156,10 @@ public class ArbolAVL {
 
         // Balance del nodo
         n.setFb(n.getAltIzq() - n.getAltDer());
-        System.out.println(n.getFb() + " " + n.getDato());
 
         // Rebalancear en caso de no estarlo
         if (n.getFb() < -1 || n.getFb() > 1) {
             balancear(n);
-            System.out.println("Balancear nodo " + n.getDato());
             return;
         }
 
@@ -230,51 +231,7 @@ public class ArbolAVL {
         actualizarFB(raizVieja);
     }
     
-    //Recorrido inorden, recibe el nodo a empezar (raiz) y una linkedlist para ir guardando el recorrido
-    public LinkedList inOrden() {
-        LinkedList rec = new LinkedList();
-        inorden(raiz, rec);
-        return rec;
-    }
-
-    public void inorden(NodoAVL aux, LinkedList recorrido) {
-        if (aux != null) {
-            inorden(aux.getIzq(), recorrido);
-            recorrido.add(aux.getDato());
-            inorden(aux.getDer(), recorrido);
-        }
-    }
-
-    //Recorrido postorden, recibe el nodo a empezar (raiz) y una linkedlist para ir guardando el recorrido
-    public LinkedList postOrden() {
-        LinkedList rec = new LinkedList();
-        postorden(raiz, rec);
-        return rec;
-    }
-
-    public void postorden(NodoAVL aux, LinkedList recorrido) {
-        if (aux != null) {
-            postorden(aux.getIzq(), recorrido);
-            postorden(aux.getDer(), recorrido);
-            recorrido.add(aux.getDato());
-        }
-    }
-    
-    //Recorrido preorden, recibe el nodo a empezar (raiz) y una linkedlist para ir guardando el recorrido
-    public LinkedList preOrden() {
-        LinkedList rec = new LinkedList();
-        preorden(raiz, rec);
-        return rec;
-    }
-
-    public void preorden(NodoAVL aux, LinkedList recorrido) {
-        if (aux != null) {
-            recorrido.add(aux.getDato());
-            preorden(aux.getIzq(), recorrido);
-            preorden(aux.getDer(), recorrido);
-        }
-    }
-
+    // Getters y Setters
     public JPanel getdibujo() {
         return new ArbolGrafico(this);
     }

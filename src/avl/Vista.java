@@ -239,7 +239,6 @@ public class Vista extends javax.swing.JFrame {
         try {
             int dato = Integer.parseInt(txtdato.getText());
             miArbol.eliminar(dato);
-            System.out.println("Nodo encontrado");
             complementos();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e, "Intenta de nuevo...", 0);
