@@ -281,10 +281,6 @@ public class Vista extends javax.swing.JFrame {
         inicializar(false);
     }//GEN-LAST:event_botonEliminar1ActionPerformed
 
-    public void complementos() {
-        actualizar();
-    }
-
     private void actualizar() {
         jScrollPane2.removeAll();
         Rectangle r = jPanel1.getBounds();
