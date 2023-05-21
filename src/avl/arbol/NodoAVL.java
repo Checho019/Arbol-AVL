@@ -75,7 +75,7 @@ public class NodoAVL {
             if (this.tieneAmbosHijos()){
                 return Math.max(izq.encontrarAltura(), der.encontrarAltura()) + 1;
             } else {
-                return this.tieneHijoIzq() ? this.getIzq().encontrarAltura() + 1 : this.getDer().encontrarAltura();
+                return this.tieneHijoIzq() ? this.getIzq().encontrarAltura() + 1 : this.getDer().encontrarAltura() + 1;
             }
         }
     }

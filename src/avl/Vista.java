@@ -1,13 +1,8 @@
 package avl;
 
 import avl.arbol.ArbolAVL;
-import java.awt.BorderLayout;
 import java.awt.Rectangle;
-import javax.swing.JButton;
-import javax.swing.JInternalFrame;
-import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 public class Vista extends javax.swing.JFrame {
 
@@ -239,15 +234,14 @@ public class Vista extends javax.swing.JFrame {
         try {
             int dato = Integer.parseInt(txtdato.getText());
             miArbol.eliminar(dato);
-            complementos();
+            actualizar();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e, "Intenta de nuevo...", 0);
         }
     }//GEN-LAST:event_botonEliminarActionPerformed
 
     private void PostOrdenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PostOrdenActionPerformed
-        // TODO add your handling code here:
-        String recorrido = null;
+        String recorrido;
         recorrido = miArbol.getRaiz().recorridoPos();
 
         this.impresion.setText("");
@@ -255,8 +249,7 @@ public class Vista extends javax.swing.JFrame {
     }//GEN-LAST:event_PostOrdenActionPerformed
 
     private void PreOrdenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PreOrdenActionPerformed
-        // TODO add your handling code here:
-        String recorrido = null;
+        String recorrido;
         recorrido = miArbol.getRaiz().recorridoPre();
 
         this.impresion.setText("");
@@ -264,8 +257,7 @@ public class Vista extends javax.swing.JFrame {
     }//GEN-LAST:event_PreOrdenActionPerformed
 
     private void InOrdenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InOrdenActionPerformed
-        // TODO add your handling code here:
-        String recorrido = null;
+        String recorrido;
         recorrido = miArbol.getRaiz().recorridoIn();
 
         this.impresion.setText("");
@@ -277,7 +269,7 @@ public class Vista extends javax.swing.JFrame {
             int dato = Integer.parseInt(txtdato.getText());
             miArbol.agregar(dato);
             inicializar(true);
-            complementos();
+            actualizar();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e, "Intenta de nuevo...", 0);
         }
@@ -285,15 +277,15 @@ public class Vista extends javax.swing.JFrame {
 
     private void botonEliminar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminar1ActionPerformed
         miArbol = new ArbolAVL();
-        complementos();
+        actualizar();
         inicializar(false);
     }//GEN-LAST:event_botonEliminar1ActionPerformed
 
     public void complementos() {
-        repintarArbol();
+        actualizar();
     }
 
-    private void repintarArbol() {
+    private void actualizar() {
         jScrollPane2.removeAll();
         Rectangle r = jPanel1.getBounds();
         jPanel1 = this.miArbol.getdibujo();
