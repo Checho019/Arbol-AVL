@@ -16,11 +16,6 @@ public class ArbolAVL {
 
     // Agregar nodo por valor
     public void agregar(int dato) {
-        try {
-            if (buscarNodo(dato) != null){
-                return;
-            }
-        } catch (Exception e){}
         tam++;
         NodoAVL nuevo = new NodoAVL(dato);
         if (raiz == null) {
@@ -41,7 +36,7 @@ public class ArbolAVL {
             } else {
                 agregar(nuevo, pivote.getIzq());
             }
-        } else if (nuevo.getDato() > pivote.getDato()){
+        } else if (nuevo.getDato() >= pivote.getDato()){
             if (!pivote.tieneHijoDer()) {
                 pivote.setDer(nuevo);
                 nuevo.setPadre(pivote);
@@ -88,9 +83,23 @@ public class ArbolAVL {
                 tam--;
                 raiz = null;
             } else if (raiz.tieneAmbosHijos()){
+                tam--;
                 NodoAVL tmp = raiz.getDer().encontrarMinimo();
-                eliminar(tmp.getDato());
                 x.setDato(tmp.getDato());
+                if (x.getDato() == tmp.getDato()){
+                    if (tmp.esHijoIzq()){
+                        tmp.getPadre().setIzq(null);
+                    } else {
+                        x.setDer(null);
+                    }
+                } else {
+                    eliminar(tmp.getDato());
+                }
+                actualizarFB(x);
+                try {
+                    actualizarFB(x.getIzq());
+                    actualizarFB(x.getDer());
+                } catch (Exception e){}
             } else {
                 tam--;
                 raiz = raiz.tieneHijoIzq() ? raiz.getIzq() : raiz.getDer();
@@ -104,14 +113,25 @@ public class ArbolAVL {
                 tam--;
                 if (x.esHijoIzq()){
                     x.getPadre().setIzq(null);
+                    actualizarFB(padrex);
                 } else {
                     x.getPadre().setDer(null);
                 }
-                actualizarFB(padrex);
+                actualizarFB(x);
             } else if (x.tieneAmbosHijos()){
                 NodoAVL tmp = x.getDer().encontrarMinimo();
-                eliminar(tmp.getDato());
                 x.setDato(tmp.getDato());
+                if (x.getDato() == tmp.getDato()){
+                    tam--;
+                    if (tmp.esHijoIzq()){
+                        tmp.getPadre().setIzq(null);
+                    } else {
+                        x.setDer(null);
+                    }
+                } else {
+                    eliminar(tmp.getDato());
+                }
+                actualizarFB(x);
             } else {
                 tam--;
                 if (x.tieneHijoIzq()){
@@ -134,6 +154,7 @@ public class ArbolAVL {
                 actualizarFB(padrex);
             }
         }
+        actualizarFB(x);
     }
     
     // Actualizar factores de balance
